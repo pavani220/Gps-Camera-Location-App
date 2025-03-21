@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         textViewLongitude = findViewById(R.id.textView_longitude);
         textViewLocation = findViewById(R.id.textView_location);
         Button takePhotoButton = findViewById(R.id.button_take_photo);
+        Button findButton = findViewById(R.id.button_find); // Find button
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -80,7 +81,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // Set onClickListener for Take Photo Button
         takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
+
+        // Set onClickListener for Find Button
+        findButton.setOnClickListener(v -> {
+            // Open the FieldMeasurementActivity when the "Find" button is clicked
+            Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
+            startActivity(intent);
+        });
     }
 
     // Fetch the last known location of the device

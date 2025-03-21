@@ -19,6 +19,15 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/button_find"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Field"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/button_take_photo"
+        android:layout_marginTop="0dp" />
+
     <!-- Only the take photo button is visible initially -->
     <Button
         android:id="@+id/button_take_photo"
@@ -29,14 +38,17 @@
         android:layout_below="@id/textView_heading"
         android:layout_marginTop="30dp" />
 
+
     <!-- ImageView for the captured photo -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_below="@id/button_take_photo"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:visibility="gone" />
+
+
 
     <!-- Latitude TextView, centered horizontally -->
     <TextView
