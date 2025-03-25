@@ -20,6 +20,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -32,6 +33,7 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
     private GoogleMap mMap;
     private Polygon currentPolygon; // To store the polygon the user draws
     private List<LatLng> polygonPoints = new ArrayList<>(); // Store the points of the polygon
+    private List<Marker> markers = new ArrayList<>(); // Store draggable markers
     private TextView areaTextView; // Reference to the TextView that will display the area
     private FusedLocationProviderClient fusedLocationClient;
     private Button calculateButton; // Reference to the button to calculate area
@@ -91,12 +93,32 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
 
         // Set up a click listener to add points to the polygon
         mMap.setOnMapClickListener(latLng -> {
-            // Add points to the polygon
-            polygonPoints.add(latLng);
-            mMap.addMarker(new MarkerOptions().position(latLng)); // Add a marker at each clicked point
+            // Add a draggable marker at each clicked point
+            Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).draggable(true)); // Draggable marker
+            markers.add(marker); // Add to list of markers
+            polygonPoints.add(latLng); // Add point to polygon
 
             // Update the polygon
             updatePolygon();
+        });
+
+        // Set up a listener for marker drag events
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {}
+
+            @Override
+            public void onMarkerDrag(Marker marker) {}
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                // When dragging ends, update the polygon points
+                int index = markers.indexOf(marker);
+                if (index != -1) {
+                    polygonPoints.set(index, marker.getPosition());
+                    updatePolygon(); // Re-render the polygon with updated points
+                }
+            }
         });
     }
 
@@ -105,7 +127,7 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
             currentPolygon.remove(); // Remove the previous polygon
         }
 
-        // Add the polygon to the map
+        // Add the polygon to the map with updated points
         PolygonOptions polygonOptions = new PolygonOptions().addAll(polygonPoints);
         currentPolygon = mMap.addPolygon(polygonOptions);
     }

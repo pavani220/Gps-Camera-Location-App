@@ -55,6 +55,8 @@
             android:label="Field Measurement">
         </activity>
 
+        <activity android:name=".ResultActivity" />
+
         <!-- FileProvider configuration -->
         <provider
             android:name="androidx.core.content.FileProvider"
