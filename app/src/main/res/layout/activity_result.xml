@@ -4,14 +4,12 @@
     android:background="@android:color/transparent">
 
     <!-- Captured Image -->
-
-    <!-- Transparent Overlay for the background of the view in the image or in the location -->
-
     <ImageView
         android:id="@+id/capturedImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,59 +19,90 @@
         android:padding="10dp"
         android:layout_alignParentBottom="true">
 
-        <!-- Map -->
+        <!-- Map Fragment -->
+
+        <!-- Latitude, Longitude, Location Block with Border -->
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="150dp"/>
+            android:layout_height="300dp"
+            android:layout_marginBottom="-60dp"/>
 
-        <!-- Latitude, Longitude, Location -->
-        <TextView
-            android:id="@+id/text_latitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Latitude: "
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+        <RelativeLayout
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-30dp"
+        android:background="@drawable/border1"
+        android:padding="10dp">
 
-        <TextView
-            android:id="@+id/text_longitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Longitude: "
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+        <!-- Latitude and Longitude Display -->
+            <LinearLayout
+                android:layout_width="237dp"
+                android:layout_height="123dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="3dp"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Address: "
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/text_latitude"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:text="Latitude: "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/text_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Timestamp: "
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/text_longitude"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:text="Longitude: "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
 
-        <!-- Logo for the Vurimi Ai mentioned in the image-->
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="end"
-            android:src="@drawable/img"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/text_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:text="Address: "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/text_timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"
+                    android:text="Timestamp: "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </LinearLayout>
 </RelativeLayout>
 
+    </LinearLayout>
 
+    <!-- Logo Image -->
 
+    <!-- Button -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="156dp"
+        android:layout_height="600dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="500dp"
+        android:layout_marginBottom="-10dp"
+        android:src="@drawable/img" />
 
+    <ImageButton
+android:id="@+id/button"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_alignParentEnd="true"
+android:layout_alignParentBottom="true"
+android:layout_marginEnd="346dp"
+android:layout_marginBottom="654dp"
+android:background="?android:attr/selectableItemBackground"
+android:src="@drawable/ic_drawable" />
 
-
+</RelativeLayout>

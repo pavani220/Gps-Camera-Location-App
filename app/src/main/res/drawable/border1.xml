@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- First layer: White background with border -->
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@android:color/white"/>
+            <stroke android:color="#FFFFFF" android:width="2dp"/>
+            <corners android:radius="8dp"/>
+        </shape>
+    </item>
+
+    <!-- Second layer: Image (foreground) -->
+    <item>
+        <bitmap
+            android:src="@drawable/img"
+            android:gravity="center"
+            android:tileMode="disabled"/>
+    </item>
+</layer-list>
