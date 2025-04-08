@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "197611150384",
+    "project_id": "vurimi-ai-agriwings",
+    "storage_bucket": "vurimi-ai-agriwings.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197611150384:android:2d6158a30faf54f4abe1f5",
+        "android_client_info": {
+          "package_name": "app.gps.gps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVgsxp-GzopRNT_ngXIge_YuYH_DcM-14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

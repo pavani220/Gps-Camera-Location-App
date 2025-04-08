@@ -31,7 +31,7 @@
 
         <!-- Set WelcomeActivity as the launcher activity -->
         <activity
-            android:name=".WelcomeActivity"
+            android:name="app.gps.gps.WelcomeActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
             android:label="Welcome">
@@ -43,25 +43,25 @@
 
         <!-- MainActivity -->
         <activity
-            android:name=".MainActivity"
+            android:name="app.gps.gps.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps">
         </activity>
 
         <!-- FieldMeasurementActivity -->
         <activity
-            android:name=".FieldMeasurementActivity"
+            android:name="app.gps.gps.FieldMeasurementActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
             android:label="Field Measurement">
         </activity>
 
-        <activity android:name=".ResultActivity" />
+        <activity android:name="app.gps.gps.ResultActivity" />
 
         <!-- FileProvider configuration -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.gps.fileprovider"
+            android:authorities="app.gps.gps.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
