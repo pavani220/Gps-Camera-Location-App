@@ -2,17 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Storage permissions (optional depending on SDK) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
+    <!-- Camera feature (optional) -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -25,43 +27,44 @@
         android:theme="@style/Theme.Gps"
         tools:targetApi="31">
 
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDXcno7ufsC-y8s07ouQlOf4pL_B95kwI8" />
 
-        <!-- Set WelcomeActivity as the launcher activity -->
+        <!-- Launcher Activity -->
         <activity
             android:name="app.gps.gps.WelcomeActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
-            android:label="Welcome">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- MainActivity -->
+        <!-- Other Activities -->
         <activity
             android:name="app.gps.gps.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Gps">
-        </activity>
+            android:theme="@style/Theme.Gps" />
 
-        <!-- FieldMeasurementActivity -->
         <activity
             android:name="app.gps.gps.FieldMeasurementActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
-            android:label="Field Measurement">
-        </activity>
+            android:label="Field Measurement" />
 
-        <activity android:name="app.gps.gps.ResultActivity" />
+        <activity
+            android:name="app.gps.gps.ResultActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps" />
 
-        <!-- FileProvider configuration -->
+        <!-- FileProvider for sharing screenshots -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="app.gps.gps.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

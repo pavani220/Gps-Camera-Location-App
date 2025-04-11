@@ -1,5 +1,4 @@
 package app.gps.gps;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,19 +9,17 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,10 +50,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
         }
 
-        // Set onClickListener for Take Photo Button
         takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
 
-        // Set onClickListener for Find Button
         findButton.setOnClickListener(v -> {
             // Open the FieldMeasurementActivity when the "Find" button is clicked
             Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
@@ -84,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    // Dispatch the camera intent to take a photo
+
     @SuppressLint("QueryPermissionsNeeded")
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

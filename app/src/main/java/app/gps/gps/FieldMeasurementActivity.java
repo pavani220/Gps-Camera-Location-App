@@ -24,9 +24,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-
 import java.util.ArrayList;
 import java.util.List;
+import com.google.maps.android.SphericalUtil;
+
 
 public class FieldMeasurementActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -36,7 +37,7 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
     private List<Marker> markers = new ArrayList<>(); // Store draggable markers
     private TextView areaTextView; // Reference to the TextView that will display the area
     private FusedLocationProviderClient fusedLocationClient;
-    private Button calculateButton; // Reference to the button to calculate area
+    private Button calculateButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +54,17 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
 
         // Initialize the calculate button
         calculateButton = findViewById(R.id.calculateButton);
-        calculateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Calculate area when button is clicked
-                if (polygonPoints.size() > 2) {
-                    double area = calculateAreaOfPolygon(polygonPoints);
-                    areaTextView.setText("Area: " + area + " hectares");
-                } else {
-                    Toast.makeText(FieldMeasurementActivity.this, "Please select at least 3 points to form a polygon.", Toast.LENGTH_SHORT).show();
-                }
+        calculateButton.setOnClickListener(v -> {
+            if (polygonPoints.size() > 2) {
+                double area = calculateAreaOfPolygon(polygonPoints);
+                areaTextView.setText("Area: " + String.format("%.2f", area) + " acres");
+            } else {
+                Toast.makeText(FieldMeasurementActivity.this, "Please select at least 3 points.", Toast.LENGTH_SHORT).show();
             }
         });
-
         // Initialize FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -95,14 +90,14 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
         mMap.setOnMapClickListener(latLng -> {
             // Add a draggable marker at each clicked point
             Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).draggable(true)); // Draggable marker
-            markers.add(marker); // Add to list of markers
-            polygonPoints.add(latLng); // Add point to polygon
+            markers.add(marker);
+            polygonPoints.add(latLng);
 
             // Update the polygon
             updatePolygon();
         });
 
-        // Set up a listener for marker drag events
+
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {}
@@ -116,7 +111,7 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
                 int index = markers.indexOf(marker);
                 if (index != -1) {
                     polygonPoints.set(index, marker.getPosition());
-                    updatePolygon(); // Re-render the polygon with updated points
+                    updatePolygon();
                 }
             }
         });
@@ -124,7 +119,7 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
 
     private void updatePolygon() {
         if (currentPolygon != null) {
-            currentPolygon.remove(); // Remove the previous polygon
+            currentPolygon.remove();
         }
 
         // Add the polygon to the map with updated points
@@ -133,28 +128,39 @@ public class FieldMeasurementActivity extends AppCompatActivity implements OnMap
     }
 
     // Function to calculate area of a polygon (Shoelace formula)
-    private double calculateAreaOfPolygon(List<LatLng> points) {
-        double area = 0;
-        int j = points.size() - 1;
 
-        // Calculate the area using the Shoelace formula
+
+    // Accurate area calculation using spherical geometry
+    private double calculateAreaOfPolygon(List<LatLng> points) {
+        if (points.size() < 3) return 0;
+
+        double total = 0.0;
+        final double radius = 6378137.0; // Earth’s radius in meters
+
         for (int i = 0; i < points.size(); i++) {
-            area += (points.get(j).longitude + points.get(i).longitude) * (points.get(j).latitude - points.get(i).latitude);
-            j = i;
+            LatLng p1 = points.get(i);
+            LatLng p2 = points.get((i + 1) % points.size());
+
+            double lat1 = Math.toRadians(p1.latitude);
+            double lon1 = Math.toRadians(p1.longitude);
+            double lat2 = Math.toRadians(p2.latitude);
+            double lon2 = Math.toRadians(p2.longitude);
+
+            total += (lon2 - lon1) * (2 + Math.sin(lat1) + Math.sin(lat2));
         }
 
-        // Convert the area to hectares (1 square meter = 1e-6 hectares)
-        double areaInHectares = Math.abs(area * 0.5 * 1E-6);
+        double areaInSquareMeters = Math.abs(total * radius * radius / 2.0);
+        double areaInAcres = areaInSquareMeters / 4046.86;
 
-        // Debugging: Log the calculated area in square meters for debugging
-        Toast.makeText(this, "Calculated Area in Square Meters: " + area + " m²", Toast.LENGTH_SHORT).show();
+        // Debug log
+        Log.d("AreaDebug", "Square Meters: " + areaInSquareMeters);
+        Log.d("AreaDebug", "Acres: " + areaInAcres);
 
-        // Log the polygon points and area for debugging
-        Log.d("PolygonPoints", "Points: " + points.toString());
-        Log.d("AreaCalculation", "Calculated Area: " + areaInHectares + " hectares");
-
-        return areaInHectares;
+        Toast.makeText(this, "Area: " + areaInAcres + " acres", Toast.LENGTH_SHORT).show();
+        return areaInAcres;
     }
+
+
 
     // Handle the permission request result (required for new android versions)
     @Override

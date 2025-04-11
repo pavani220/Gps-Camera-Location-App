@@ -1,5 +1,12 @@
-<paths>
-    <external-path
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Allow access to cache directory for sharing screenshots -->
+    <cache-path
+        name="shared_images"
+        path="." />
+
+    <!-- Optional: If you want to support external files too -->
+    <external-files-path
         name="external_files"
         path="." />
 </paths>

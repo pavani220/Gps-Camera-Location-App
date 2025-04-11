@@ -2,20 +2,28 @@ package app.gps.gps;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.graphics.Canvas;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,6 +48,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
     private double latitude, longitude;
     private String currentPhotoPath;
     private String timestamp;
+    private RelativeLayout resultLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         textLongitude = findViewById(R.id.text_longitude);
         textAddress = findViewById(R.id.text_address);
         textTimestamp = findViewById(R.id.text_timestamp);
+        resultLayout = findViewById(R.id.resultLayout);
 
         // Display the image
         File imgFile = new File(currentPhotoPath);
@@ -66,10 +76,8 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
             capturedImageView.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
         }
 
-        // Set timestamp
+        // Set timestamp, latitude, and longitude
         textTimestamp.setText("Timestamp: " + timestamp);
-
-        // Set latitude and longitude
         textLatitude.setText("Latitude: " + latitude);
         textLongitude.setText("Longitude: " + longitude);
 
@@ -82,53 +90,27 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
             mapFragment.getMapAsync(this);
         }
 
-        // Set the download functionality for the image
-        findViewById(R.id.button).setOnClickListener(v -> {
-            saveImageToGallery();
-        });
+        // Set the save functionality for the screenshot
+        Button shareButton = findViewById(R.id.shareButton);
+        shareButton.setOnClickListener(v -> shareScreenshot());
+
+        ImageButton saveButton = findViewById(R.id.button);
+        saveButton.setOnClickListener(v -> saveScreenshot());
     }
 
     private void getLocationName(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
-            // Fetching the address from the provided latitude and longitude
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
-            // Check if we got a valid address
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-
-                // Log the address components for debugging
-                Log.d("Address", "Address found: " + address.toString());
-
-                // Getting the components of the address
-                String subLocality = address.getSubLocality();
-                String locality = address.getLocality();
-                String adminArea = address.getAdminArea();
-                String countryName = address.getCountryName();
-                String postalCode = address.getPostalCode();
-                String featureName = address.getFeatureName();
-
-                // Combine the components into a full address
                 StringBuilder fullAddress = new StringBuilder();
-
-                if (subLocality != null) fullAddress.append(subLocality).append(", ");
-                if (locality != null) fullAddress.append(locality).append(", ");
-                if (adminArea != null) fullAddress.append(adminArea).append(", ");
-                if (postalCode != null) fullAddress.append(postalCode).append(", ");
-                if (countryName != null) fullAddress.append(countryName);
-
-                // If the address is still incomplete, add the feature name (if available)
-                if (fullAddress.length() == 0 && featureName != null) {
-                    fullAddress.append(featureName);
-                }
-
-                // Set the address to the TextView
-                if (fullAddress.length() == 0) {
-                    textAddress.setText("Address: Unknown");
-                } else {
-                    textAddress.setText("Address: " + fullAddress.toString());
-                }
+                if (address.getSubLocality() != null) fullAddress.append(address.getSubLocality()).append(", ");
+                if (address.getLocality() != null) fullAddress.append(address.getLocality()).append(", ");
+                if (address.getAdminArea() != null) fullAddress.append(address.getAdminArea()).append(", ");
+                if (address.getPostalCode() != null) fullAddress.append(address.getPostalCode()).append(", ");
+                if (address.getCountryName() != null) fullAddress.append(address.getCountryName());
+                textAddress.setText("Address: " + fullAddress.toString());
             } else {
                 textAddress.setText("Address: Unknown");
             }
@@ -138,46 +120,86 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    private void saveImageToGallery() {
-        // Get the bitmap of the captured image
-        File imgFile = new File(currentPhotoPath);
-        if (imgFile.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+    private void saveScreenshot() {
+        // Capture the entire screen layout as a Bitmap
+        resultLayout.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(resultLayout.getDrawingCache());
+        resultLayout.setDrawingCacheEnabled(false);
 
-            // Save the image to the gallery
-            try {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.TITLE, "Captured Image");
-                values.put(MediaStore.Images.Media.DESCRIPTION, "Image from GPS capture");
-                values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
-                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        // Save the bitmap to the gallery
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "Captured_" + System.currentTimeMillis() + ".jpg");
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/GPS_Camera");
 
-                // Get the content resolver and insert the image into the MediaStore
-                getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-                FileOutputStream out = new FileOutputStream(imgFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                out.close();
-
-                // Show a toast message confirming the image has been saved
-                Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
+        try {
+            android.net.Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (uri != null) {
+                try (FileOutputStream out = (FileOutputStream) getContentResolver().openOutputStream(uri)) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    Toast.makeText(this, "Photo saved to gallery", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void shareScreenshot() {
+        // Capture the layout to a bitmap
+        View rootView = findViewById(R.id.resultLayout);
+        Bitmap bitmap = Bitmap.createBitmap(rootView.getWidth(), rootView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        rootView.draw(canvas);
+
+        try {
+            // Save to cache directory
+            File imageFile = new File(getExternalCacheDir(), "screenshot.jpg");
+            FileOutputStream fos = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            // Get URI using FileProvider
+            Uri uri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",  // Must match <provider> in manifest
+                    imageFile
+            );
+
+            // Create share intent
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/jpeg");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // Launch chooser
+            startActivity(Intent.createChooser(shareIntent, "Share Screenshot via"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to share screenshot", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
 
         // Enable location-related features
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // If permissions are not granted, you should handle it, but for this example, we will simply return
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        this.googleMap.setMyLocationEnabled(true);
+        googleMap.setMyLocationEnabled(true);
+
+        // Set the map to Satellite view
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         // Add a marker to the map for the current location
         LatLng currentLocation = new LatLng(latitude, longitude);
