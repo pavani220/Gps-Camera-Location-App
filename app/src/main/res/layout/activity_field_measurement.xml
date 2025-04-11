@@ -13,7 +13,7 @@
         android:id="@+id/areaTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Area: 0 hectares"
+        android:text="Area: 0 acres"
         android:textSize="20sp"
         android:textColor="#fff"
         android:layout_alignParentBottom="true"

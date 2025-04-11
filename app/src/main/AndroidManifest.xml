@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -59,7 +60,7 @@
         <activity
             android:name="app.gps.gps.ResultActivity"
             android:exported="true"
-            android:theme="@style/Theme.Gps" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <!-- FileProvider for sharing screenshots -->
         <provider

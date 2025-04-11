@@ -5,7 +5,6 @@
     android:background="@android:color/transparent">
 
 
-
     <ImageView
         android:id="@+id/capturedImage"
         android:layout_width="match_parent"

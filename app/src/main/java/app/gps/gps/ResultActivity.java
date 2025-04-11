@@ -11,8 +11,11 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -21,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
@@ -186,7 +191,6 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -206,4 +210,22 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Location"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent=new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT,"Share Via");
+        startActivity(Intent.createChooser(intent,"share via"));
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
+

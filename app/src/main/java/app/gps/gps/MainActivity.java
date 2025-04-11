@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
     @SuppressLint("QueryPermissionsNeeded")
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
