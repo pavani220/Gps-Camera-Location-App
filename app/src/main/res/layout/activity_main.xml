@@ -6,13 +6,17 @@
     android:background="@drawable/vurimi">
 
     <!-- Heading for the app -->
+
+    <!-- Button to find the field -->
+
+
+
     <TextView
         android:id="@+id/textView_heading"
         android:layout_width="410dp"
         android:layout_height="60dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="7dp"
         android:background="@drawable/gradient_background"
         android:text="GPS Camera App"
         android:textAlignment="center"
@@ -20,7 +24,6 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <!-- Button to find the field -->
     <Button
         android:id="@+id/button_find"
         android:layout_width="wrap_content"

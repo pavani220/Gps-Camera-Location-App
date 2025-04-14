@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -11,6 +10,7 @@
     <!-- Storage permissions (optional depending on SDK) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- Camera feature (optional) -->
     <uses-feature
@@ -61,6 +61,18 @@
             android:name="app.gps.gps.ResultActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
+        <!-- Signup Activity -->
+        <activity
+            android:name="app.gps.gps.SignupActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps" />
+
+        <!-- Login Activity -->
+        <activity
+            android:name="app.gps.gps.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps" />
 
         <!-- FileProvider for sharing screenshots -->
         <provider

@@ -1,4 +1,5 @@
 package app.gps.gps;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,17 +10,20 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
     private String currentPhotoPath;
-    private double latitude, longitude;
+    private double latitude = 0.0, longitude = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,20 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Check if permissions are granted
+        // Request necessary permissions
+        requestPermissions();
+
+        // Handle photo button click
+        takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
+
+        // Optional: Navigate to FieldMeasurementActivity
+        findButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void requestPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
@@ -49,71 +66,65 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
         }
-
-        takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
-
-        findButton.setOnClickListener(v -> {
-            // Open the FieldMeasurementActivity when the "Find" button is clicked
-            Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
-            startActivity(intent);
-        });
-
-        // Fetch the last known location of the device
-        getLastLocation();
     }
 
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+    @SuppressLint("MissingPermission")
+    private void dispatchTakePictureIntent() {
+        // Ensure location permission is granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Get location first
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
+                .addOnSuccessListener(location -> {
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
+
+                        // After getting location, launch camera
+                        launchCamera();
                     } else {
-                        Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Unable to fetch location. Try again.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Location fetch failed", Toast.LENGTH_SHORT).show());
     }
 
-    @SuppressLint("QueryPermissionsNeeded")
-    private void dispatchTakePictureIntent() {
+    private void launchCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
+            File photoFile;
             try {
-                photoFile = createImageFile();  // Create the photo file
+                photoFile = createImageFile();
             } catch (IOException ex) {
                 Toast.makeText(this, "Error creating file", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "app.gps.gps.fileprovider", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(
+                        this,
+                        "app.gps.gps.fileprovider",  // Update if your authority string differs
+                        photoFile
+                );
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
 
-    // Handle activity result for photo capture
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            // Ensure that the photo path is not null
             if (currentPhotoPath != null) {
-                // After taking the photo, save the file to the gallery
+                // Add to gallery
                 galleryAddPic();
 
-                // Log to check if the path is correct
-                Toast.makeText(this, "Photo saved at: " + currentPhotoPath, Toast.LENGTH_LONG).show();
-
-                // Send data to ResultActivity
+                // Send to ResultActivity
                 Intent intent = new Intent(MainActivity.this, ResultActivity.class);
                 intent.putExtra("photoPath", currentPhotoPath);
                 intent.putExtra("latitude", latitude);
@@ -135,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Create a file to save the photo
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -145,9 +155,16 @@ public class MainActivity extends AppCompatActivity {
             throw new IOException("Unable to get external storage directory.");
         }
 
-        // Create the temporary image file in the external directory
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-        currentPhotoPath = image.getAbsolutePath();  // Set the global path to the image's path
+        currentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    // Optional: Handle permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // You can handle permission denied here if needed
     }
 }
