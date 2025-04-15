@@ -10,13 +10,25 @@
     <!-- Button to find the field -->
 
 
+    <TextView
+        android:id="@+id/textView_headings"
+        android:layout_width="410dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/gradient_background"
+        android:text="Vurimi AI Global Services"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView_heading"
         android:layout_width="410dp"
         android:layout_height="60dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="43dp"
         android:background="@drawable/gradient_background"
         android:text="GPS Camera App"
         android:textAlignment="center"
@@ -43,6 +55,7 @@
         android:layout_below="@id/textView_heading"
         android:layout_marginTop="30dp" />
 
+
     <!-- Google Map Fragment, initially hidden -->
     <fragment
         android:id="@+id/map"
@@ -51,6 +64,6 @@
         android:layout_height="200dp"
         android:layout_below="@id/button_take_photo"
         android:layout_marginTop="50dp"
-        android:visibility="gone" /> <!-- Initially hidden -->
+        android:visibility="gone" />
 
 </RelativeLayout>

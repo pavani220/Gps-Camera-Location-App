@@ -15,6 +15,15 @@
             android:layout_height="59dp"
             android:layout_marginBottom="24dp"
             android:fontFamily="sans-serif-medium"
+            android:text="Vurimi AI Global Services"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="59dp"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="sans-serif-medium"
             android:text="Create Account"
             android:textColor="#FFFFFF"
             android:textSize="28sp" />
