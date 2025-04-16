@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="app.gps.gps">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Storage permissions (optional depending on SDK) -->
+
+    <!-- For legacy storage access on Android 9 and below -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <!-- Camera feature (optional) -->
     <uses-feature
@@ -33,9 +36,20 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDXcno7ufsC-y8s07ouQlOf4pL_B95kwI8" />
 
-        <!-- Launcher Activity -->
+        <!-- FileProvider for sharing files like images -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="app.gps.gps.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Launcher (First) Activity -->
         <activity
-            android:name="app.gps.gps.WelcomeActivity"
+            android:name=".WelcomeActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
             android:label="@string/app_name">
@@ -45,45 +59,36 @@
             </intent-filter>
         </activity>
 
-        <!-- Other Activities -->
+        <!-- Login Activity -->
         <activity
-            android:name="app.gps.gps.MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps" />
 
+        <!-- Signup Activity -->
         <activity
-            android:name="app.gps.gps.FieldMeasurementActivity"
+            android:name=".SignupActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps" />
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps" />
+
+        <!-- Field Measurement -->
+        <activity
+            android:name=".FieldMeasurementActivity"
             android:exported="true"
             android:theme="@style/Theme.Gps"
             android:label="Field Measurement" />
 
+        <!-- Result Activity -->
         <activity
-            android:name="app.gps.gps.ResultActivity"
+            android:name=".ResultActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-
-        <!-- Signup Activity -->
-        <activity
-            android:name="app.gps.gps.SignupActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Gps" />
-
-        <!-- Login Activity -->
-        <activity
-            android:name="app.gps.gps.LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Gps" />
-
-        <!-- FileProvider for sharing screenshots -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
 
     </application>
 

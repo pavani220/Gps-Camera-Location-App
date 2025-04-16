@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "197611150384",
-    "project_id": "vurimi-ai-agriwings",
-    "storage_bucket": "vurimi-ai-agriwings.firebasestorage.app"
+    "project_number": "136341517616",
+    "firebase_url": "https://login-vdrones-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "login-vdrones",
+    "storage_bucket": "login-vdrones.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:197611150384:android:2d6158a30faf54f4abe1f5",
+        "mobilesdk_app_id": "1:136341517616:android:979985598df41a47b404f5",
         "android_client_info": {
           "package_name": "app.gps.gps"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDVgsxp-GzopRNT_ngXIge_YuYH_DcM-14"
+          "current_key": "AIzaSyA3r_sWm6-H-xJkqG9M7KqU6B9kWnaNb6A"
         }
       ],
       "services": {

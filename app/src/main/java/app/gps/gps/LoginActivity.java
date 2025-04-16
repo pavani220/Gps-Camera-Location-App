@@ -5,13 +5,19 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class LoginActivity extends AppCompatActivity {
+
     EditText email, password;
     Button loginBtn;
     TextView toSignup;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,24 +29,51 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         toSignup = findViewById(R.id.toSignup);
 
-        // Redirect to SignupActivity if user doesn't have an account
+        mAuth = FirebaseAuth.getInstance();
+
+        // Go to signup screen
         toSignup.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
-            finish(); // Close LoginActivity
+            finish();
         });
 
-        // Handle login button click
         loginBtn.setOnClickListener(v -> {
-            // Here you would typically validate login credentials
+            String enteredEmail = email.getText().toString().trim();
+            String enteredPassword = password.getText().toString().trim();
 
-            // Mark the user as logged in after successful login
-            SessionManager sessionManager = new SessionManager(LoginActivity.this);
-            sessionManager.setLogin(true); // Set login status to true
+            if (enteredEmail.isEmpty()) {
+                email.setError("Email is required");
+                return;
+            }
 
-            // Go to MainActivity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Close LoginActivity to prevent going back
+            if (enteredPassword.isEmpty()) {
+                password.setError("Password is required");
+                return;
+            }
+
+            loginUser(enteredEmail, enteredPassword);
         });
+    }
+
+    private void loginUser(String enteredEmail, String enteredPassword) {
+        mAuth.signInWithEmailAndPassword(enteredEmail, enteredPassword)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+
+                        // ✅ Save login state
+                        SessionManager sessionManager = new SessionManager(LoginActivity.this);
+                        sessionManager.setLogin(true);
+
+                        // ✅ Navigate to MainActivity & clear backstack
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

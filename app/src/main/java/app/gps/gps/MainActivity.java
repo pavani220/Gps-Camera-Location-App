@@ -8,11 +8,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -38,20 +41,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // ✅ Session check
+        SessionManager sessionManager = new SessionManager(this);
+        if (!sessionManager.isLoggedIn()) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
+
+        // ✅ Set up Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Button takePhotoButton = findViewById(R.id.button_take_photo);
         Button findButton = findViewById(R.id.button_find);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Request necessary permissions
         requestPermissions();
 
-        // Handle photo button click
         takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
 
-        // Optional: Navigate to FieldMeasurementActivity
         findButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
             startActivity(intent);
@@ -70,20 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private void dispatchTakePictureIntent() {
-        // Ensure location permission is granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Get location first
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
-
-                        // After getting location, launch camera
                         launchCamera();
                     } else {
                         Toast.makeText(this, "Unable to fetch location. Try again.", Toast.LENGTH_SHORT).show();
@@ -106,43 +117,12 @@ public class MainActivity extends AppCompatActivity {
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(
                         this,
-                        "app.gps.gps.fileprovider",  // Update if your authority string differs
+                        "app.gps.gps.fileprovider",
                         photoFile
                 );
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            if (currentPhotoPath != null) {
-                // Add to gallery
-                galleryAddPic();
-
-                // Send to ResultActivity
-                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
-                intent.putExtra("photoPath", currentPhotoPath);
-                intent.putExtra("latitude", latitude);
-                intent.putExtra("longitude", longitude);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Photo path is null", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void galleryAddPic() {
-        if (currentPhotoPath != null) {
-            File f = new File(currentPhotoPath);
-            Uri contentUri = Uri.fromFile(f);
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            mediaScanIntent.setData(contentUri);
-            sendBroadcast(mediaScanIntent);
         }
     }
 
@@ -160,11 +140,61 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    // Optional: Handle permission result
+    private void galleryAddPic() {
+        if (currentPhotoPath != null) {
+            File f = new File(currentPhotoPath);
+            Uri contentUri = Uri.fromFile(f);
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(contentUri);
+            sendBroadcast(mediaScanIntent);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            if (currentPhotoPath != null) {
+                galleryAddPic();
+                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                intent.putExtra("photoPath", currentPhotoPath);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Photo path is null", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // ✅ Inflate the logout menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    // ✅ Handle logout
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SessionManager sessionManager = new SessionManager(this);
+            sessionManager.setLogin(false);
+            Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // You can handle permission denied here if needed
     }
 }
