@@ -2,7 +2,8 @@
     <!-- First layer: White background with border -->
     <item>
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <solid android:color="@android:color/white"/>
+            <gradient android:endColor="#80ffffff"/>
+
             <stroke android:color="#FFFFFF" android:width="2dp"/>
             <corners android:radius="8dp"/>
         </shape>

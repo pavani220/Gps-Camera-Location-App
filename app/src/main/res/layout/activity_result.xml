@@ -24,18 +24,18 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="390dp"
             android:layout_height="248dp"
-            android:layout_marginBottom="-100dp" />
+            android:layout_marginBottom="-80dp" />
 
         <RelativeLayout
-            android:layout_width="317dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-30dp"
+            android:layout_width="301dp"
+            android:layout_height="137dp"
+            android:layout_marginTop="-80dp"
             android:background="@drawable/border1"
             android:padding="10dp">
 
             <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="128dp"
+                android:layout_width="277dp"
+                android:layout_height="122dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="4dp"
@@ -46,7 +46,7 @@
                     android:layout_width="286dp"
                     android:layout_height="32dp"
                     android:text="Latitude: "
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:text="Longitude: "
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -62,7 +62,7 @@
                     android:layout_width="286dp"
                     android:layout_height="33dp"
                     android:text="Address: "
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="14sp" />
 
                 <TextView
@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="33dp"
                     android:text="Timestamp: "
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="16sp" />
             </LinearLayout>
         </RelativeLayout>
@@ -90,25 +90,17 @@
         android:layout_marginBottom="90dp"
         android:src="@drawable/img" />
 
-    <ImageButton
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="346dp"
-        android:layout_marginBottom="654dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_drawable" />
 
-    <Button
-        android:id="@+id/shareButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share Screenshot"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"/>
+    <ImageView
+        android:id="@+id/button"
+        android:layout_width="44dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="350dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="10dp"
+        android:contentDescription="App Logo"
+        android:background="@color/cardview_light_background"
+        android:src="@drawable/baseline_download_24" />
+
 
 </RelativeLayout>

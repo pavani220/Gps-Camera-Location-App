@@ -12,9 +12,8 @@ android {
         applicationId "app.gps.gps"
         minSdk 24
         targetSdk 35
-        versionCode 12
-        versionName "2.3"
-
+        versionCode 23
+        versionName "3.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -59,6 +58,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:21.0.0'
     implementation 'com.google.firebase:firebase-auth:22.0.0'
     implementation 'com.google.firebase:firebase-firestore:24.5.0'
+    implementation 'com.google.android.libraries.places:places:3.3.0'
+
 
 }
 

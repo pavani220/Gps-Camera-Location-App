@@ -91,5 +91,4 @@
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
     </application>
-
 </manifest>

@@ -1,5 +1,4 @@
 package app.gps.gps;
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -51,6 +50,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
     private double latitude, longitude;
     private String currentPhotoPath;
     private String timestamp;
+    private ImageView button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,14 +94,11 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         }
 
         // Save button
-        ImageButton saveButton = findViewById(R.id.button);
+        ImageView saveButton = findViewById(R.id.button);
         saveButton.setOnClickListener(v -> saveScreenshot());
 
         // Share button
-        Button shareButton = findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(v -> shareScreenshot());
     }
-
     private void getLocationName(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -139,13 +136,23 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
             if (uri != null) {
                 try (FileOutputStream out = (FileOutputStream) getContentResolver().openOutputStream(uri)) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    Toast.makeText(this, "Screenshot saved to gallery", Toast.LENGTH_SHORT).show();
                 }
+
+                Toast.makeText(this, "Screenshot saved to gallery", Toast.LENGTH_SHORT).show();
+
+                // 👇 Automatically show share popup after saving
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("image/jpeg");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(shareIntent, "Share Screenshot"));
             }
         } catch (IOException e) {
             Toast.makeText(this, "Error saving screenshot", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
+
 
     private void shareScreenshot() {
         View rootView = findViewById(R.id.resultLayout);
@@ -215,3 +222,6 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         return true;
     }
 }
+
+
+

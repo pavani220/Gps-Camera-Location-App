@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="app.gps.gps" />
-                  <option name="mobileSdkAppId" value="1:197611150384:android:2d6158a30faf54f4abe1f5" />
-                  <option name="projectId" value="vurimi-ai-agriwings" />
-                  <option name="projectNumber" value="197611150384" />
+                  <option name="mobileSdkAppId" value="1:136341517616:android:979985598df41a47b404f5" />
+                  <option name="projectId" value="login-vdrones" />
+                  <option name="projectNumber" value="136341517616" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
