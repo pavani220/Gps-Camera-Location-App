@@ -29,6 +29,7 @@
         android:textStyle="bold"
         android:padding="10dp" />
 
+
     <TextView
         android:id="@+id/textView_heading"
         android:layout_width="match_parent"
@@ -42,6 +43,7 @@
         android:textStyle="bold"
         android:padding="10dp" />
 
+
     <!-- Take Photo button -->
     <Button
         android:id="@+id/button_take_photo"
@@ -51,6 +53,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/textView_heading"
         android:layout_marginTop="20dp" />
+
 
     <!-- Find Field button -->
     <Button
@@ -62,13 +65,23 @@
         android:layout_below="@id/button_take_photo"
         android:layout_marginTop="20dp" />
 
+    <Button
+        android:id="@+id/geotag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Geo Tagging"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/button_find"
+        android:layout_marginTop="20dp" />
+
     <!-- Google Map (hidden initially) -->
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_below="@id/button_find"
-        android:layout_marginTop="30dp"
+        android:layout_below="@id/geotag"
+        android:layout_marginTop="60dp"
         android:visibility="gone" />
+
 </RelativeLayout>

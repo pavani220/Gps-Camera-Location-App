@@ -1,106 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resultLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:padding="16dp"
+    android:background="#ffffff">
+    <!-- Map Fragment -->
 
     <ImageView
         android:id="@+id/capturedImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        />
+        android:layout_width="401dp"
+        android:layout_height="538dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginRight="-10dp"
+        android:scaleType="centerCrop" />
 
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="68dp"
+        android:layout_height="130dp"
+        android:layout_below="@id/capturedImage"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="20dp"
+        android:layout_toStartOf="@+id/rightInfoLayout"
+        android:layout_weight="1" />
+
+    <!-- Right-side Address + Timestamp beside the map -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#9C000000"
+        android:id="@+id/rightInfoLayout"
+        android:layout_width="228dp"
+        android:layout_height="135dp"
+        android:layout_alignTop="@id/map"
+        android:layout_alignBottom="@id/map"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="-5dp"
+        android:background="@drawable/border1"
         android:orientation="vertical"
-        android:padding="10dp"
-        android:layout_alignParentBottom="true">
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="390dp"
-            android:layout_height="248dp"
-            android:layout_marginBottom="-80dp" />
+        <TextView
+            android:id="@+id/text_latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Latitude:"
+            android:textSize="16sp" />
 
-        <RelativeLayout
-            android:layout_width="301dp"
-            android:layout_height="137dp"
-            android:layout_marginTop="-80dp"
-            android:background="@drawable/border1"
-            android:padding="10dp">
+        <TextView
+            android:id="@+id/text_longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Longitude:"
+            android:textSize="16sp" />
 
-            <LinearLayout
-                android:layout_width="277dp"
-                android:layout_height="122dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="4dp"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:text="Address:"
+            android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/text_latitude"
-                    android:layout_width="286dp"
-                    android:layout_height="32dp"
-                    android:text="Latitude: "
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/text_longitude"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:text="Longitude: "
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/text_address"
-                    android:layout_width="286dp"
-                    android:layout_height="33dp"
-                    android:text="Address: "
-                    android:textColor="#fff"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/text_timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="33dp"
-                    android:text="Timestamp: "
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/text_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Timestamp:"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
-    <!-- Logo Image -->
-
-    <!-- Button -->
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="141dp"
-        android:layout_height="218dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="350dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="90dp"
-        android:src="@drawable/img" />
-
-
+    <!-- Save Button -->
     <ImageView
         android:id="@+id/button"
-        android:layout_width="44dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="350dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="10dp"
-        android:contentDescription="App Logo"
-        android:background="@color/cardview_light_background"
+        android:layout_width="48dp"
+        android:layout_height="43dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="637dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Save Screenshot"
         android:src="@drawable/baseline_download_24" />
-
 
 </RelativeLayout>

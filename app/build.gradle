@@ -7,13 +7,12 @@ plugins {
 android {
     namespace 'app.gps.gps'
     compileSdk 35
-
     defaultConfig {
         applicationId "app.gps.gps"
         minSdk 24
         targetSdk 35
-        versionCode 25
-        versionName "3.6"
+        versionCode 29
+        versionName "4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

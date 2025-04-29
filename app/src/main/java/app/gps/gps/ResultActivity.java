@@ -13,25 +13,19 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,9 +34,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 public class ResultActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private ImageView capturedImageView, logoImageView;
+    private ImageView capturedImageView;
     private TextView textLatitude, textLongitude, textAddress, textTimestamp;
     private RelativeLayout resultLayout;
     private GoogleMap googleMap;
@@ -50,45 +45,41 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
     private double latitude, longitude;
     private String currentPhotoPath;
     private String timestamp;
-    private ImageView button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result); // Ensure this matches your XML file name
+        setContentView(R.layout.activity_result);
 
-        // Retrieve data
+        // Get data
         currentPhotoPath = getIntent().getStringExtra("photoPath");
         latitude = getIntent().getDoubleExtra("latitude", 0);
         longitude = getIntent().getDoubleExtra("longitude", 0);
         timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        // UI elements
+        // Initialize views
         capturedImageView = findViewById(R.id.capturedImage);
-        logoImageView = findViewById(R.id.logo);
         textLatitude = findViewById(R.id.text_latitude);
         textLongitude = findViewById(R.id.text_longitude);
         textAddress = findViewById(R.id.text_address);
         textTimestamp = findViewById(R.id.text_timestamp);
         resultLayout = findViewById(R.id.resultLayout);
 
-        // Display image
+        // Display captured image
         File imgFile = new File(currentPhotoPath);
         if (imgFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             capturedImageView.setImageBitmap(bitmap);
         }
 
-        // Set details
+        // Display location info
         textLatitude.setText("Latitude: " + latitude);
         textLongitude.setText("Longitude: " + longitude);
         textTimestamp.setText("Timestamp: " + timestamp);
-
         getLocationName(latitude, longitude);
 
         // Load Google Map
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
@@ -96,9 +87,8 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         // Save button
         ImageView saveButton = findViewById(R.id.button);
         saveButton.setOnClickListener(v -> saveScreenshot());
-
-        // Share button
     }
+
     private void getLocationName(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -122,10 +112,46 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void saveScreenshot() {
-        resultLayout.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(resultLayout.getDrawingCache());
-        resultLayout.setDrawingCacheEnabled(false);
+        if (googleMap == null) return;
 
+        // Step 1: Capture the map
+        googleMap.snapshot(mapBitmap -> {
+
+            // Step 2: Ensure the full layout is measured and drawn
+            resultLayout.setDrawingCacheEnabled(false);
+            resultLayout.setDrawingCacheEnabled(true);
+            resultLayout.buildDrawingCache();
+
+            int width = resultLayout.getWidth();
+            int height = resultLayout.getHeight();
+
+            if (width == 0 || height == 0) {
+                resultLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                width = resultLayout.getMeasuredWidth();
+                height = resultLayout.getMeasuredHeight();
+                resultLayout.layout(0, 0, width, height);
+            }
+
+            Bitmap layoutBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(layoutBitmap);
+            resultLayout.draw(canvas); // draw the entire screen
+
+            // Step 3: Draw the map bitmap on top
+            View mapView = findViewById(R.id.map);
+            int[] location = new int[2];
+            mapView.getLocationInWindow(location);
+            int mapX = mapView.getLeft();
+            int mapY = mapView.getTop();
+
+            canvas.drawBitmap(mapBitmap, mapX, mapY, null);
+
+            // Step 4: Save to gallery
+            saveBitmapToGallery(layoutBitmap);
+        });
+    }
+
+    private void saveBitmapToGallery(Bitmap bitmap) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "Screenshot_" + System.currentTimeMillis() + ".jpg");
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
@@ -140,7 +166,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
 
                 Toast.makeText(this, "Screenshot saved to gallery", Toast.LENGTH_SHORT).show();
 
-                // 👇 Automatically show share popup after saving
+                // Share intent
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("image/jpeg");
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -150,31 +176,6 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         } catch (IOException e) {
             Toast.makeText(this, "Error saving screenshot", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
-        }
-    }
-
-
-    private void shareScreenshot() {
-        View rootView = findViewById(R.id.resultLayout);
-        Bitmap bitmap = Bitmap.createBitmap(rootView.getWidth(), rootView.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        rootView.draw(canvas);
-
-        try {
-            File file = new File(getExternalCacheDir(), "screenshot.jpg");
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            }
-
-            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
-
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/jpeg");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(shareIntent, "Share via"));
-        } catch (IOException e) {
-            Toast.makeText(this, "Failed to share screenshot", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -197,7 +198,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu); // Make sure you have this menu XML
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -218,10 +219,6 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, message);
         startActivity(Intent.createChooser(intent, "Share Location Info"));
-
         return true;
     }
 }
-
-
-

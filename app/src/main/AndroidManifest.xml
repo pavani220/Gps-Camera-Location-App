@@ -90,5 +90,9 @@
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
+        <activity android:name=".GeoTagActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gps"/>
+
     </application>
 </manifest>

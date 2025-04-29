@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         Button takePhotoButton = findViewById(R.id.button_take_photo);
         Button findButton = findViewById(R.id.button_find);
 
+        // ✅ New: GeoTag button
+        Button geotagButton = findViewById(R.id.geotag);
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         requestPermissions();
@@ -69,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
 
         findButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
+            startActivity(intent);
+        });
+
+        // ✅ GeoTag button click: Launch GeoTagActivity
+        geotagButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, GeoTagActivity.class);
             startActivity(intent);
         });
     }
@@ -168,14 +177,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ✅ Inflate the logout menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    // ✅ Handle logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
