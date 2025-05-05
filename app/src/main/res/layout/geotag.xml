@@ -87,7 +87,7 @@
         android:layout_marginBottom="6dp"
         android:layout_alignParentStart="true"
         android:layout_marginStart="10dp"
-        android:text=""
+        android:text="Some Info"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
 
@@ -97,6 +97,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Geotag"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"/>
+
+    <!-- 📥 Download Report Button -->
+    <Button
+        android:id="@+id/downloadReportButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download Report"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"/>

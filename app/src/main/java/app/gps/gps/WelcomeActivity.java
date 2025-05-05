@@ -15,11 +15,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        TextView welcomeText = findViewById(R.id.welcome_text);
-        TextView appNameText = findViewById(R.id.app_name);
         Button startButton = findViewById(R.id.start_button);
-
-
 
         // Optional: allow user to skip splash manually
         startButton.setOnClickListener(v -> navigateToNextScreen());
