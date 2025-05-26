@@ -7,10 +7,13 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.MotionEvent;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,13 +25,18 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -38,11 +46,19 @@ public class MainActivity extends AppCompatActivity {
     private String currentPhotoPath;
     private double latitude = 0.0, longitude = 0.0;
 
+    private GoogleMap mMap;
+
+    private Handler autoScrollHandler = new Handler();
+    private Runnable autoScrollRunnable;
+    private int scrollX = 0;
+    private static final int SCROLL_DELAY = 3000; // milliseconds
+    private static final int SCROLL_STEP = 20; // pixels
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ✅ Session check
+        // Session check
         SessionManager sessionManager = new SessionManager(this);
         if (!sessionManager.isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -54,32 +70,53 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // ✅ Set up Toolbar
+        // Toolbar setup
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button takePhotoButton = findViewById(R.id.button_take_photo);
-        Button findButton = findViewById(R.id.button_find);
+        ImageView takePhotoButton = findViewById(R.id.take_photo);
+        ImageView findButton = findViewById(R.id.find_field);
+        ImageView geotagButton = findViewById(R.id.geo_tagging);
+        HorizontalScrollView imageScroll = findViewById(R.id.image_scroll);
 
-        // ✅ New: GeoTag button
-        Button geotagButton = findViewById(R.id.geotag);
+        // Auto-scroll logic
+        autoScrollRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (imageScroll != null && imageScroll.getChildAt(0) != null) {
+                    scrollX += SCROLL_STEP;
+                    int maxScroll = imageScroll.getChildAt(0).getWidth() - imageScroll.getWidth();
+                    if (scrollX > maxScroll) {
+                        scrollX = 0;
+                    }
+                    imageScroll.smoothScrollTo(scrollX, 0);
+                    autoScrollHandler.postDelayed(this, SCROLL_DELAY);
+                }
+            }
+        };
+        autoScrollHandler.postDelayed(autoScrollRunnable, SCROLL_DELAY);
+
+        // Stop auto-scroll on touch
+        imageScroll.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                autoScrollHandler.removeCallbacks(autoScrollRunnable);
+            }
+            return false;
+        });
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         requestPermissions();
 
         takePhotoButton.setOnClickListener(v -> dispatchTakePictureIntent());
+        findButton.setOnClickListener(v -> startActivity(new Intent(this, FieldMeasurementActivity.class)));
+        geotagButton.setOnClickListener(v -> startActivity(new Intent(this, GeoTagActivity.class)));
 
-        findButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, FieldMeasurementActivity.class);
-            startActivity(intent);
-        });
-
-        // ✅ GeoTag button click: Launch GeoTagActivity
-        geotagButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, GeoTagActivity.class);
-            startActivity(intent);
-        });
+        // Map setup
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     private void requestPermissions() {
@@ -199,9 +236,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Required by OnMapReadyCallback
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Move camera to India
+        LatLng india = new LatLng(20.5937, 78.9629);
+        float zoomLevel = 4.0f;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(india, zoomLevel));
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
+
+
+
+

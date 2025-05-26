@@ -1,19 +1,24 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- First layer: White background with border -->
-    <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <gradient android:endColor="#80ffffff"/>
 
-            <stroke android:color="#FFFFFF" android:width="2dp"/>
-            <corners android:radius="8dp"/>
+    <!-- Background layer: white with rounded corners and border -->
+    <item>
+        <shape>
+            <solid android:color="#96FFFFFF" />
+            <stroke android:color="#FFFFFF" android:width="1dp" />
+            <corners android:radius="8dp" />
         </shape>
     </item>
 
-    <!-- Second layer: Image (foreground) -->
-    <item>
+    <!-- Foreground image: scaled smaller, bottom center, with opacity -->
+    <item
+        android:gravity="bottom|center_horizontal"
+        android:bottom="-70dp"
+        android:alpha="0.2"> <!-- Opacity: 0.0 (transparent) to 1.0 (opaque) -->
         <bitmap
             android:src="@drawable/img"
+            android:tileMode="disabled"
             android:gravity="center"
-            android:tileMode="disabled"/>
+            android:antialias="true"
+            android:dither="true" />
     </item>
 </layer-list>

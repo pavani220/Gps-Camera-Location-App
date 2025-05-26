@@ -3,37 +3,28 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="#121212"
+    android:background="@drawable/welcome"
     android:padding="24dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="96dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="24dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="Welcome Back"
-        android:textColor="#FFFFFF"
-        android:textSize="28sp" />
 
     <EditText
         android:id="@+id/email"
         android:hint="Email"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#AAAAAA"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:inputType="textEmailAddress"
-        android:backgroundTint="#FFFFFF"
+        android:backgroundTint="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="20dp" />
 
     <EditText
         android:id="@+id/password"
         android:hint="Password"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#AAAAAA"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:inputType="textPassword"
-        android:backgroundTint="#FFFFFF"
+        android:backgroundTint="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp" />
@@ -52,6 +43,17 @@
         android:layout_height="70dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
+        android:layout_marginLeft="25dp"
         android:text="Don't have an account? Sign up"
-        android:textColor="#BBBBBB" />
+        android:textColor="@color/black" />
 </LinearLayout>
+
+
+
+
+
+
+
+
+
+

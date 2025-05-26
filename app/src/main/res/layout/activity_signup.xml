@@ -1,5 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#121212"
+    android:background="@drawable/welcome"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,7 +16,7 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="sans-serif-medium"
             android:text="Vurimi AI Global Services"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="28sp" />
 
         <TextView
@@ -25,26 +25,27 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="sans-serif-medium"
             android:text="Create Account"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="28sp" />
 
         <EditText
             android:id="@+id/username"
             android:hint="Username"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
-            android:backgroundTint="#FFFFFF"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:backgroundTint="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
             android:layout_marginBottom="16dp" />
 
         <EditText
             android:id="@+id/email"
             android:hint="Email"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:inputType="textEmailAddress"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
@@ -52,10 +53,10 @@
         <EditText
             android:id="@+id/password"
             android:hint="Password"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:inputType="textPassword"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
@@ -75,7 +76,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:text="Already have an account? Login"
-            android:textColor="#BBBBBB" />
+            android:layout_marginLeft="40dp"
+            android:textColor="@color/black" />
     </LinearLayout>
 </ScrollView>
 

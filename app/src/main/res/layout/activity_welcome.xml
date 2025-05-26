@@ -5,19 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.gps.gps.WelcomeActivity"
-    android:layout_marginRight="20dp"
-    android:background="@drawable/welcome">
+
+    android:background="@drawable/vgps">
 
     <!-- Welcome Text -->
 
     <!-- App Name Text -->
 
-
     <Button
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="468dp"
+        android:layout_marginTop="500dp"
         android:text="Get Started"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,3 +26,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

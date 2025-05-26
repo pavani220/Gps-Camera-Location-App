@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 public class ResultActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageView capturedImageView;
@@ -214,6 +213,7 @@ public class ResultActivity extends AppCompatActivity implements OnMapReadyCallb
                 + "Timestamp: " + timestamp + "\n"
                 + "Map: " + mapsLink + "\n\n"
                 + "Shared via GPS Camera App";
+
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
